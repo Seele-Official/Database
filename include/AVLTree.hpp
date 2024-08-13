@@ -17,17 +17,17 @@ namespace avltree {
             Node *right;
             uint32_t height;
             T data;
-            void *operator new(size_t size)
-            {
-                void *ptr = ::operator new(size);
-                std::cout << "Allocating " << size << " bytes at " << ptr << std::endl;
-                return ptr;
-            }
-            void operator delete(void *ptr)
-            {
-                std::cout << "Deallocating at " << ptr << std::endl;
-                ::operator delete(ptr);
-            }
+            // void *operator new(size_t size)
+            // {
+            //     void *ptr = ::operator new(size);
+            //     std::cout << "Allocating " << size << " bytes at " << ptr << std::endl;
+            //     return ptr;
+            // }
+            // void operator delete(void *ptr)
+            // {
+            //     std::cout << "Deallocating at " << ptr << std::endl;
+            //     ::operator delete(ptr);
+            // }
             Node() : left(nullptr), right(nullptr), height(0) {}
             Node(T &data) : data(data), left(nullptr), right(nullptr), height(1) {}
             Node(T &&data) : data(std::move(data)), left(nullptr), right(nullptr), height(1) {}
@@ -53,7 +53,7 @@ namespace avltree {
                 return os;
             }
         };
-
+        Node *root;
         std::ostream &write(std::ostream &os, const Node *node, void (*writeData) (std::ostream&, const T&))
         {
             if (node == nullptr)
@@ -95,7 +95,7 @@ namespace avltree {
         }
 
 
-        Node *root;
+        
         uint32_t max(uint32_t a, uint32_t b) { return a > b ? a : b; }
         int32_t height(Node *node) { return node == nullptr ? 0 : node->height; }
         Node *rightRotate(Node *node){
@@ -244,6 +244,8 @@ namespace avltree {
             return is;
         }
         AVLTree();
+        AVLTree(const AVLTree &tree) = delete;
+        AVLTree(AVLTree<T> &&other);
         ~AVLTree();
     };
 
@@ -252,6 +254,15 @@ namespace avltree {
 
     template <typename T>
     AVLTree<T>::AVLTree() : root(nullptr) {}
+
+    template <typename T>
+    AVLTree<T>::AVLTree(AVLTree<T> &&other)
+    {
+        this->root = other.root;
+        other.root = nullptr;
+    }
+
+
     template <typename T>
     AVLTree<T>::~AVLTree()
     {
